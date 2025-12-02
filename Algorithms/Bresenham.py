@@ -1,48 +1,60 @@
-# Bresenham's Line Drawing Algorithm in Python
-# Uses graphics.py library (install using: pip install graphics.py)
+import pygame
+import sys
 
-from graphics import *
+def bresenham_line(screen, x1, y1, x2, y2):
+    # Colors
+    BLACK = (0, 0, 0)
 
-def bresenham_line(x1, y1, x2, y2):
-    win = GraphWin("Bresenham Line Drawing Algorithm", 500, 500)
-    win.setBackground("white")
-
-    # Calculate dx and dy
+    # Calculate dx & dy
     dx = abs(x2 - x1)
     dy = abs(y2 - y1)
 
-    # Determine in which direction to step
-    sx = 1 if x2 > x1 else -1   # step for x
-    sy = 1 if y2 > y1 else -1   # step for y
+    # Direction of steps
+    sx = 1 if x2 > x1 else -1
+    sy = 1 if y2 > y1 else -1
 
-    # Decision parameter
-    p = 2 * dy - dx
+    p = 2 * dy - dx  # decision parameter
 
     x = x1
     y = y1
 
     # Plot the first point
-    Circle(Point(x, y), 1).draw(win)
+    pygame.draw.rect(screen, BLACK, (x, y, 2, 2))
 
-    # Loop for each step in x-direction (dx times)
+    # Draw pixels along x
     for _ in range(dx):
-        # If p < 0, choose East pixel → x increases
         if p < 0:
             p = p + 2 * dy
         else:
-            # If p >= 0, choose North-East pixel → x & y increase
             p = p + 2 * (dy - dx)
             y = y + sy
 
         x = x + sx
 
         # Draw the pixel
-        pixel = Circle(Point(x, y), 1)
-        pixel.setFill("black")
-        pixel.draw(win)
+        pygame.draw.rect(screen, BLACK, (x, y, 2, 2))
 
-    win.getMouse()  # wait for click
-    win.close()
 
-# Example: draw a line
-bresenham_line(30, 40, 460, 300)
+def main():
+    pygame.init()
+
+    screen = pygame.display.set_mode((500, 500))
+    pygame.display.set_caption("Bresenham Line Drawing Algorithm")
+
+    screen.fill((255, 255, 255))  # white background
+
+    # Example line
+    bresenham_line(screen, 30, 40, 460, 300)
+
+    pygame.display.update()
+
+    # Wait until window closed
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+
+if __name__ == "__main__":
+    main()
